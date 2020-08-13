@@ -1,0 +1,49 @@
+version: '3'
+services: 
+    apache:
+        image: baltechies/magento2.4:apache-php7.4
+        ports:
+            - "80:80" # web
+            - "9001:9000" # xdebug
+        volumes:    
+            - ./src:/var/www/html
+        env_file: 
+            - env 
+        depends_on: 
+            - db
+        links:
+            - db
+        networks:
+            - magento2-network    
+    db:
+        image: mysql:8
+        volumes:
+            - db-data:/var/lib/mysql/data
+        env_file: 
+            - env   
+        depends_on: 
+            - elasticsearch     
+    elasticsearch:
+        image: elasticsearch:7.6.2  
+        environment:
+            - cluster.name=docker-cluster
+            - bootstrap.memory_lock=true
+            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+        ulimits: 
+            memlock:
+                soft: -1
+                hard: -1
+        volumes: 
+            - ./elasticsearchdata:/usr/share/elasticsearch/data
+        ports:
+            - 9200:9200
+        networks:
+            - magento2-network     
+
+networks:
+    magento2-network:
+        driver: bridge     
+
+volumes:
+    # magento-data:
+    db-data:        
