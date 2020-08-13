@@ -1,5 +1,7 @@
 FROM php:7.4-apache
 
+LABEL maintainer="Bal Singh bal@tii.co.in"
+
 # Install System Dependencies
 
 RUN apt-get update \
