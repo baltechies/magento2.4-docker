@@ -17,28 +17,49 @@ services:
             - magento2-network    
     db:
         image: mysql:8
+        command: 
+            - --innodb-use-native-aio=0
+            - --default-authentication-plugin=mysql_native_password
         volumes:
-            - db-data:/var/lib/mysql/data
+            - ./db-data:/var/lib/mysql
+        ports:
+            - "3306:3306"
+        user: "1000:50"    
+        # environment:
+        #     MYSQL_ROOT_PASSWORD: phpmysql
+        #     MYSQL_DATABASE: testapp
         env_file: 
             - env   
-        depends_on: 
-            - elasticsearch     
-    elasticsearch:
-        image: elasticsearch:7.6.2  
-        environment:
-            - cluster.name=docker-cluster
-            - bootstrap.memory_lock=true
-            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-        ulimits: 
-            memlock:
-                soft: -1
-                hard: -1
-        volumes: 
-            - ./elasticsearchdata:/usr/share/elasticsearch/data
-        ports:
-            - 9200:9200
+        # depends_on: 
+        #     - elasticsearch  
         networks:
-            - magento2-network     
+            - magento2-network   
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        ports:
+            - "8080:80"
+        # links:
+        #     - db:db 
+        depends_on:
+            - db  
+        networks:
+            - magento2-network  
+    # elasticsearch:
+    #     image: elasticsearch:7.6.2  
+    #     environment:
+    #         - cluster.name=docker-cluster
+    #         - bootstrap.memory_lock=true
+    #         - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    #     ulimits: 
+    #         memlock:
+    #             soft: -1
+    #             hard: -1
+    #     volumes: 
+    #         - ./elasticsearchdata:/usr/share/elasticsearch/data
+    #     ports:
+    #         - "9200:9200"
+    #     networks:
+    #         - magento2-network     
 
 networks:
     magento2-network:
