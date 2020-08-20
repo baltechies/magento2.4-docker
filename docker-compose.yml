@@ -2,6 +2,7 @@ version: '3'
 services: 
     apache:
         image: baltechies/magento2.4:apache-php7.4
+        # build: . 
         ports:
             - "80:80" # web
             - "9001:9000" # xdebug
@@ -64,6 +65,9 @@ services:
     # use elasticsearch image maintained by Mark Shust https://hub.docker.com/r/markoshust/magento-elasticsearch
     elasticsearch:
         image: markoshust/magento-elasticsearch:7.6.2-2
+        hostname: elasticsearch
+        networks:
+            - magento2-network
         ports:
           - "9200:9200"
           - "9300:9300"
@@ -79,4 +83,5 @@ networks:
 volumes:
     # magento-data:
     db-data:  
-    elasticsearchdata:      
+    elasticsearchdata:  
+    # src:    

@@ -98,7 +98,7 @@ RUN wget https://files.magerun.net/n98-magerun2.phar \
 	&& chmod +x ./n98-magerun2.phar \
 	&& mv ./n98-magerun2.phar /usr/local/bin/
 
-	
+
 # Configuring system
 
 ADD .docker/config/php.ini /usr/local/etc/php/php.ini
@@ -108,7 +108,10 @@ RUN ln -s /etc/apache2/sites-available/magento.conf /etc/apache2/sites-enabled/m
 
 # COPY ./src /var/www/html
 
-RUN chown -R www-data:www-data /var/www
+RUN chown -R www-data:www-data /var/www \
+  	&& usermod -u 1000 www-data \
+	&& a2enmod rewrite \
+	&& a2enmod headers
 
 VOLUME /var/www/html
 WORKDIR /var/www/html
